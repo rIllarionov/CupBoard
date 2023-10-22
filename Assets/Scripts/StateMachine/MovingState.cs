@@ -5,19 +5,12 @@ using UnityEngine;
 
 public class MovingState : MonoBehaviour, IEnterebleStateWithContext, IExitableState
 {
-    //передать ссылки иначе?
-    
     [SerializeField] private Mover _mover;
     [SerializeField] private MapBuilder _mapBuilder;
 
-    //медиатор?
-    
-    public Action<Transform, List<Point>, float> OnMove;
+    private Action<Transform, List<Point>, float> _onMove;
 
-    //поле финиш лишнее
-    
     private Point _startPoint;
-    private Point _finishPoint;
     private List<Point> _path;
 
     private StateMachine _stateMachine;
@@ -29,12 +22,12 @@ public class MovingState : MonoBehaviour, IEnterebleStateWithContext, IExitableS
 
     public void OnExit()
     {
-        OnMove -= _mover.Move;
+        _onMove -= _mover.Move;
     }
 
     public void OnEnter(IExitableStateWithContext exitableState)
     {
-        OnMove += _mover.Move;
+        _onMove += _mover.Move;
         ReadContext(exitableState);
         StartCoroutine(Move());
     }
@@ -44,7 +37,7 @@ public class MovingState : MonoBehaviour, IEnterebleStateWithContext, IExitableS
         var moveDuration = 1f;
 
         var chipTransform = _startPoint.Chip.transform;
-        OnMove?.Invoke(chipTransform, _path, moveDuration);
+        _onMove?.Invoke(chipTransform, _path, moveDuration);
         ReplaceChip();
 
         yield return new WaitForSeconds(moveDuration);

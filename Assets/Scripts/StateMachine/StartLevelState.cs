@@ -3,8 +3,8 @@ using UnityEngine;
 
 public class StartLevelState : MonoBehaviour, IEnterableState, IExitableState
 {
-    //передать ссылки иначе + переключить ui на события?
-    
+    //передать ссылки иначе + переключить ui на события через медиатор
+
     [SerializeField] private MapBuilder _mapBuilder;
     [SerializeField] private UiController _uiController;
 
@@ -29,8 +29,6 @@ public class StartLevelState : MonoBehaviour, IEnterableState, IExitableState
 
     public void OnEnter()
     {
-        //разбить на методы? 
-        
         if (_levelNumber > 0)
         {
             _mapBuilder.DestroyMap();
@@ -43,12 +41,9 @@ public class StartLevelState : MonoBehaviour, IEnterableState, IExitableState
             return;
         }
 
-        var settings = _levelsSettings[_levelNumber];
+        PrepareLevelSettings();
 
-        _gameSettingsHolder = new GameSettingsHolder();
-        _gameSettingsHolder.Initialize(settings);
         _mapBuilder.Build(_gameSettingsHolder);
-
         _stateMachine.Enter<CatchStartPointState>();
     }
 
@@ -59,5 +54,13 @@ public class StartLevelState : MonoBehaviour, IEnterableState, IExitableState
             FileRider.ReadFile("Assets/GameSettings/test.txt"),
             FileRider.ReadFile("Assets/GameSettings/test1.txt")
         };
+    }
+
+    private void PrepareLevelSettings()
+    {
+        var settings = _levelsSettings[_levelNumber];
+
+        _gameSettingsHolder = new GameSettingsHolder();
+        _gameSettingsHolder.Initialize(settings);
     }
 }

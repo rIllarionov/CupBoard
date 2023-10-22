@@ -4,18 +4,12 @@ using UnityEngine;
 
 public class CatchStartPointState : MonoBehaviour, IEnterableState, IExitableStateWithContext
 {
-    //передать ссылки иначе?
-    
     [SerializeField] private MapBuilder _mapBuilder;
-    [SerializeField] private HighLighter _highLighter;
-
     public Point StartPoint { get; private set; }
 
-    //подписаться в медиаторе?
-    private Action<List<ILightable>, bool> _turnAllLights;
-    private Action<ILightable, bool> _onGetPoint;
-
     private StateMachine _stateMachine;
+    private readonly HighLighter _highLighter = new();
+    private Action<List<ILightable>, bool> _turnAllLights;
     private bool _isActive;
 
     public void Initialize(StateMachine stateMachine)
@@ -25,18 +19,14 @@ public class CatchStartPointState : MonoBehaviour, IEnterableState, IExitableSta
 
     public void OnEnter()
     {
-        _turnAllLights += _highLighter.TurnAllLights;
-        _onGetPoint += _highLighter.TurnLight;
-
+        _turnAllLights += _highLighter.SwitchLights;
         _isActive = true;
     }
 
     public IExitableStateWithContext OnExit()
     {
         _isActive = false;
-        _turnAllLights -= _highLighter.TurnAllLights;
-        _onGetPoint += _highLighter.TurnLight;
-
+        _turnAllLights -= _highLighter.SwitchLights;
         return this;
     }
 
@@ -52,7 +42,7 @@ public class CatchStartPointState : MonoBehaviour, IEnterableState, IExitableSta
             {
                 StartPoint = startPoint;
 
-                _onGetPoint?.Invoke(StartPoint.Chip, true);
+                _turnAllLights?.Invoke(new List<ILightable> { StartPoint.Chip }, true);
                 _stateMachine.Enter<PathFinderState>();
             }
         }

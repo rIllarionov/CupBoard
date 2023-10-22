@@ -8,11 +8,11 @@ public class GameSettingsHolder
 
     public int ChipsCount { get; private set; }
     public int PointsCount { get; private set; }
-    public List<int> StartChipsPosition { get; private set; } = new();
-    public List<int> WinChipsPosition { get; private set; } = new();
+    public List<int> StartChipsPosition { get; } = new();
+    public List<int> WinChipsPosition { get; } = new();
     public List<Vector2> PointsCoordinates { get; private set; }
     public List<Vector2> Connections { get; private set; }
-    
+
     private int _connectionsCount;
 
     public void Initialize(string[] settings)

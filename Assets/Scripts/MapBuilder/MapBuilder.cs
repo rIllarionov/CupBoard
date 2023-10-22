@@ -4,7 +4,7 @@ using UnityEngine;
 public class MapBuilder : MonoBehaviour
 {
     //может вынести все в скриптабл?
-    
+
     [SerializeField] private LineDrawer _lineDrawer;
 
     [SerializeField] private Transform _mapPrefab;
@@ -16,12 +16,11 @@ public class MapBuilder : MonoBehaviour
     [SerializeField] private Vector3 _minimapSize;
 
     [SerializeField] private List<Sprite> _chipSprites;
-
-    //решить нужны ли все эти свойства
+    
     private GameSettingsHolder _gameSettingsHolder;
-    public List<Point> MapPoints { get; private set; } = new();
-    public List<Chip> MapChips { get; private set; } = new();
-    public List<Chip> MinimapChips { get; private set; } = new();
+    public List<Chip> MapChips { get; } = new();
+    public List<Point> MapPoints { get; } = new();
+    public List<Chip> MinimapChips { get; } = new();
 
     private List<Point> _minimapPoints = new();
 
@@ -51,9 +50,6 @@ public class MapBuilder : MonoBehaviour
         MapChips.Clear();
         MapPoints.Clear();
         _minimapPoints.Clear();
-
-        //сделать на событиях
-        _lineDrawer.ClearLines();
     }
 
     private void CreateMaps()
@@ -92,7 +88,7 @@ public class MapBuilder : MonoBehaviour
             secondPoint.SetNeighbour(firstPoint);
 
             _lineDrawer.DrawLine(mapRoot, firstPoint.transform.position, secondPoint.transform.position);
-            //сделать на событиях
+            //сделать на событиях?
         }
     }
 

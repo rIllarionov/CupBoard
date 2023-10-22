@@ -1,14 +1,9 @@
 using System.Collections.Generic;
-using UnityEngine;
 
-public class HighLighter : MonoBehaviour //монобех не нужен
+public class HighLighter
 {
-    public void TurnLight(ILightable lightable, bool state)
-    {
-        lightable?.SwitchLight(state);
-    }
-
-    public void TurnAllLights(List<ILightable> lightables, bool state)
+    //сделать статикой?
+    public void SwitchLights(List<ILightable> lightables, bool state)
     {
         if (lightables == null) return;
 

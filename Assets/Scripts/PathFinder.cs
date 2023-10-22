@@ -49,6 +49,7 @@ public class PathFinder
         }
 
         Point current = finish;
+        
         while (current != start)
         {
             path.Add(current);

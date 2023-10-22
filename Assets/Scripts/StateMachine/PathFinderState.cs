@@ -4,25 +4,21 @@ using UnityEngine;
 
 public class PathFinderState : MonoBehaviour, IEnterebleStateWithContext, IExitableStateWithContext
 {
-    //передать ссылки иначе?
-    
     [SerializeField] private MapBuilder _mapBuilder;
-    [SerializeField] private HighLighter _highLighter;
-
     public Point StartPoint { get; private set; }
-    
-    //финиш не требуется для передачи
-    public Point FinishPoint { get; private set; }
     public List<Point> Path { get; private set; }
 
-    private readonly PathFinder _pathFinder = new PathFinder();
+    private readonly PathFinder _pathFinder = new();
+    private readonly HighLighter _highLighter = new();
+
     private StateMachine _stateMachine;
 
-    private bool _isActive;
+    private Action<List<ILightable>, bool> _turnAllLights;
 
     private List<Point> _availablePaths;
 
-    private Action<List<ILightable>, bool> _turnAllLights;
+    private bool _isActive;
+
 
     public void Initialize(StateMachine stateMachine)
     {
@@ -31,7 +27,7 @@ public class PathFinderState : MonoBehaviour, IEnterebleStateWithContext, IExita
 
     public void OnEnter(IExitableStateWithContext exitableState)
     {
-        _turnAllLights += _highLighter.TurnAllLights;
+        _turnAllLights += _highLighter.SwitchLights;
 
         ReadContext(exitableState);
         FindPathsFrom(StartPoint);
@@ -42,7 +38,7 @@ public class PathFinderState : MonoBehaviour, IEnterebleStateWithContext, IExita
     public IExitableStateWithContext OnExit()
     {
         _isActive = false;
-        _turnAllLights -= _highLighter.TurnAllLights;
+        _turnAllLights -= _highLighter.SwitchLights;
         return this;
     }
 
@@ -50,19 +46,17 @@ public class PathFinderState : MonoBehaviour, IEnterebleStateWithContext, IExita
     {
         if (_isActive && Input.GetMouseButtonDown(0))
         {
+            _turnAllLights?.Invoke(new List<ILightable>(_mapBuilder.MapPoints), false);
+            
             var finishPoint = GetFinishPoint();
 
             if (finishPoint != null)
             {
-                FinishPoint = finishPoint;
-                Path = _pathFinder.GetPath(StartPoint, FinishPoint);
-
-                _turnAllLights?.Invoke(new List<ILightable>(_mapBuilder.MapPoints), false);
+                Path = _pathFinder.GetPath(StartPoint, finishPoint);
                 _stateMachine.Enter<MovingState>();
             }
             else
             {
-                _turnAllLights?.Invoke(new List<ILightable>(_mapBuilder.MapPoints), false);
                 _stateMachine.Enter<CatchStartPointState>();
             }
         }
@@ -78,6 +72,7 @@ public class PathFinderState : MonoBehaviour, IEnterebleStateWithContext, IExita
             {
                 var point = info.collider.GetComponent<Point>();
 
+                //вынести в отдельный метод?
                 if (_availablePaths.Contains(point))
                 {
                     return point;

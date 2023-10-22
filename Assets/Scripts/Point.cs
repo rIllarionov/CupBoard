@@ -12,6 +12,10 @@ public class Point : MonoBehaviour, ILightable
 
     private List<Point> _neighbourPoints = new();
 
+    public void SwitchLight(bool state)
+    {
+        _renderer.color = state ? _hightlightColor : _normalColor;
+    }
     public void SetNeighbour(Point neighbourPoint)
     {
         _neighbourPoints.Add(neighbourPoint);
@@ -21,12 +25,7 @@ public class Point : MonoBehaviour, ILightable
     {
         return _neighbourPoints;
     }
-
-    public void SwitchLight(bool state)
-    {
-        _renderer.color = state ? _hightlightColor : _normalColor;
-    }
-
+    
     public void SetChip(Chip chip)
     {
         Chip = chip;

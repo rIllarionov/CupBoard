@@ -2,6 +2,8 @@ using UnityEngine;
 
 public class GameManager : MonoBehaviour
 {
+    //можно переклить все связи с событиями и подписываться тут 
+    
     private StateMachine _stateMachine;
 
     private void Start()
