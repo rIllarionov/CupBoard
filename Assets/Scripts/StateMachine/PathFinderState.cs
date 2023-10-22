@@ -5,9 +5,7 @@ using UnityEngine;
 public class PathFinderState : MonoBehaviour, IEnterebleStateWithContext, IExitableStateWithContext
 {
     [SerializeField] private MapBuilder _mapBuilder;
-    public Point StartPoint { get; private set; }
-    public List<Point> Path { get; private set; }
-
+    
     private readonly PathFinder _pathFinder = new();
     private readonly HighLighter _highLighter = new();
 
@@ -16,6 +14,8 @@ public class PathFinderState : MonoBehaviour, IEnterebleStateWithContext, IExita
     private Action<List<ILightable>, bool> _turnAllLights;
 
     private List<Point> _availablePaths;
+    private Point _startPoint;
+    private List<Point> _path;
 
     private bool _isActive;
 
@@ -25,21 +25,20 @@ public class PathFinderState : MonoBehaviour, IEnterebleStateWithContext, IExita
         _stateMachine = stateMachine;
     }
 
-    public void OnEnter(IExitableStateWithContext exitableState)
+    public void OnEnter(IContext context)
     {
         _turnAllLights += _highLighter.SwitchLights;
-
-        ReadContext(exitableState);
-        FindPathsFrom(StartPoint);
+        ReadContext(context);
+        FindPathsFrom(_startPoint);
 
         _isActive = true;
     }
 
-    public IExitableStateWithContext OnExit()
+    public IContext OnExit()
     {
         _isActive = false;
         _turnAllLights -= _highLighter.SwitchLights;
-        return this;
+        return new PathFinderStateContext(_startPoint, _path);
     }
 
     private void Update()
@@ -47,12 +46,12 @@ public class PathFinderState : MonoBehaviour, IEnterebleStateWithContext, IExita
         if (_isActive && Input.GetMouseButtonDown(0))
         {
             _turnAllLights?.Invoke(new List<ILightable>(_mapBuilder.MapPoints), false);
-            
+
             var finishPoint = GetFinishPoint();
 
             if (finishPoint != null)
             {
-                Path = _pathFinder.GetPath(StartPoint, finishPoint);
+                _path = _pathFinder.GetPath(_startPoint, finishPoint);
                 _stateMachine.Enter<MovingState>();
             }
             else
@@ -83,10 +82,10 @@ public class PathFinderState : MonoBehaviour, IEnterebleStateWithContext, IExita
         return null;
     }
 
-    private void ReadContext(IExitableStateWithContext exitableState)
+    private void ReadContext(IContext context)
     {
-        var catchStartPointState = (CatchStartPointState)exitableState;
-        StartPoint = catchStartPointState.StartPoint;
+        var catchStartPointState = (CatchStartPointStateContext)context;
+        _startPoint = catchStartPointState.StartPoint;
     }
 
     private void FindPathsFrom(Point startPoint)

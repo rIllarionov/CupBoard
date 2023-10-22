@@ -5,12 +5,12 @@ using UnityEngine;
 public class CatchStartPointState : MonoBehaviour, IEnterableState, IExitableStateWithContext
 {
     [SerializeField] private MapBuilder _mapBuilder;
-    public Point StartPoint { get; private set; }
-
+    
     private StateMachine _stateMachine;
     private readonly HighLighter _highLighter = new();
     private Action<List<ILightable>, bool> _turnAllLights;
     private bool _isActive;
+    private Point _startPoint;
 
     public void Initialize(StateMachine stateMachine)
     {
@@ -23,11 +23,11 @@ public class CatchStartPointState : MonoBehaviour, IEnterableState, IExitableSta
         _isActive = true;
     }
 
-    public IExitableStateWithContext OnExit()
+    public IContext OnExit()
     {
         _isActive = false;
         _turnAllLights -= _highLighter.SwitchLights;
-        return this;
+        return new CatchStartPointStateContext(_startPoint);
     }
 
     private void Update()
@@ -40,9 +40,9 @@ public class CatchStartPointState : MonoBehaviour, IEnterableState, IExitableSta
 
             if (startPoint != null)
             {
-                StartPoint = startPoint;
+                _startPoint = startPoint;
 
-                _turnAllLights?.Invoke(new List<ILightable> { StartPoint.Chip }, true);
+                _turnAllLights?.Invoke(new List<ILightable> { _startPoint.Chip }, true);
                 _stateMachine.Enter<PathFinderState>();
             }
         }

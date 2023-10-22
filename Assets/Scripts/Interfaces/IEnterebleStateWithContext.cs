@@ -1,4 +1,4 @@
 public interface IEnterebleStateWithContext : IState
 {
-    public void OnEnter(IExitableStateWithContext exitableState);
+    public void OnEnter(IContext context);
 }

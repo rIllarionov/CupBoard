@@ -19,7 +19,7 @@ public class StateMachine
 
     public void Enter<TState>() where TState : IState
     {
-        IExitableStateWithContext context = null;
+        IContext context = null;
 
         switch (CurrentState)
         {

@@ -25,10 +25,10 @@ public class MovingState : MonoBehaviour, IEnterebleStateWithContext, IExitableS
         _onMove -= _mover.Move;
     }
 
-    public void OnEnter(IExitableStateWithContext exitableState)
+    public void OnEnter(IContext context)
     {
         _onMove += _mover.Move;
-        ReadContext(exitableState);
+        ReadContext(context);
         StartCoroutine(Move());
     }
 
@@ -45,12 +45,11 @@ public class MovingState : MonoBehaviour, IEnterebleStateWithContext, IExitableS
         _stateMachine.Enter<FinishLevelCheckerState>();
     }
 
-    private void ReadContext(IExitableStateWithContext exitableState)
+    private void ReadContext(IContext context)
     {
-        var pathFinderState = (PathFinderState)exitableState;
-
-        _startPoint = pathFinderState.StartPoint;
-        _path = pathFinderState.Path;
+        var pathFinderContext = (PathFinderStateContext)context;
+        _startPoint = pathFinderContext.StartPoint;
+        _path = pathFinderContext.Path;
     }
 
     private void ReplaceChip()

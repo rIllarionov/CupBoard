@@ -1,25 +1,26 @@
 using System;
 using UnityEngine;
 
-public class FinishLevelCheckerState : MonoBehaviour, IEnterebleStateWithContext, IExitableState
+public class FinishLevelCheckerState : MonoBehaviour, IEnterableState, IExitableState
 {
     [SerializeField] private MapBuilder _mapBuilder;
     [SerializeField] private UiController _uiController;
 
     private Action _onLevelFinish;
-    
+
     private StateMachine _stateMachine;
 
     public void Initialize(StateMachine stateMachine)
     {
         _stateMachine = stateMachine;
     }
-    public void OnEnter(IExitableStateWithContext exitableState)
+
+    public void OnEnter()
     {
         _onLevelFinish += _uiController.ShowButton;
         StartCheck();
     }
-    
+
     public void OnExit()
     {
         _onLevelFinish -= _uiController.ShowButton;
