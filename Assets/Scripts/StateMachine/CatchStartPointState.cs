@@ -1,16 +1,21 @@
-using System;
 using System.Collections.Generic;
+using Cysharp.Threading.Tasks;
 using UnityEngine;
 
-public class CatchStartPointState : MonoBehaviour, IEnterableState, IExitableStateWithContext
+public class CatchStartPointState : IEnterableState, IExitableStateWithContext, ITickableState
 {
-    [SerializeField] private MapBuilder _mapBuilder;
-    
+    private readonly MapBuilder _mapBuilder;
+    private readonly HighLighter _highLighter;
+
     private StateMachine _stateMachine;
-    private readonly HighLighter _highLighter = new();
-    private Action<List<ILightable>, bool> _turnAllLights;
     private bool _isActive;
     private Point _startPoint;
+
+    public CatchStartPointState(MapBuilder mapBuilder, HighLighter highLighter)
+    {
+        _mapBuilder = mapBuilder;
+        _highLighter = highLighter;
+    }
 
     public void Initialize(StateMachine stateMachine)
     {
@@ -19,22 +24,20 @@ public class CatchStartPointState : MonoBehaviour, IEnterableState, IExitableSta
 
     public void OnEnter()
     {
-        _turnAllLights += _highLighter.SwitchLights;
         _isActive = true;
     }
 
     public IContext OnExit()
     {
         _isActive = false;
-        _turnAllLights -= _highLighter.SwitchLights;
         return new CatchStartPointStateContext(_startPoint);
     }
 
-    private void Update()
+    public void OnTick()
     {
         if (_isActive && Input.GetMouseButtonUp(0))
         {
-            _turnAllLights?.Invoke(new List<ILightable>(_mapBuilder.MapPoints), false);
+            _highLighter.SwitchLights(new List<ILightable>(_mapBuilder.MapPoints), false);
 
             var startPoint = GetStartPoint();
 
@@ -42,7 +45,7 @@ public class CatchStartPointState : MonoBehaviour, IEnterableState, IExitableSta
             {
                 _startPoint = startPoint;
 
-                _turnAllLights?.Invoke(new List<ILightable> { _startPoint.Chip }, true);
+                _highLighter.SwitchLights(new List<ILightable> { _startPoint.Chip }, true); 
                 _stateMachine.Enter<PathFinderState>();
             }
         }

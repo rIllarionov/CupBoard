@@ -1,5 +1,12 @@
 {
   "dependencies": {
+    "com.cysharp.unitask": {
+      "version": "https://github.com/Cysharp/UniTask.git?path=src/UniTask/Assets/Plugins/UniTask",
+      "depth": 0,
+      "source": "git",
+      "dependencies": {},
+      "hash": "cfe509a55602ba5be6df7fa0468b10298b8a053d"
+    },
     "com.unity.2d.animation": {
       "version": "9.0.2",
       "depth": 1,
@@ -182,6 +189,13 @@
       "dependencies": {},
       "url": "https://packages.unity.com"
     },
+    "com.unity.nuget.mono-cecil": {
+      "version": "1.11.4",
+      "depth": 1,
+      "source": "registry",
+      "dependencies": {},
+      "url": "https://packages.unity.com"
+    },
     "com.unity.performance.profile-analyzer": {
       "version": "1.2.2",
       "depth": 1,
@@ -256,6 +270,15 @@
         "com.unity.modules.jsonserialize": "1.0.0"
       },
       "url": "https://packages.unity.com"
+    },
+    "jp.hadashikick.vcontainer": {
+      "version": "https://github.com/hadashiA/VContainer.git?path=VContainer/Assets/VContainer#1.13.2",
+      "depth": 0,
+      "source": "git",
+      "dependencies": {
+        "com.unity.nuget.mono-cecil": "1.10.1"
+      },
+      "hash": "af7bd4ecabaf6ea3f9e58ecc4352dd5296e5ef29"
     },
     "com.unity.modules.ai": {
       "version": "1.0.0",

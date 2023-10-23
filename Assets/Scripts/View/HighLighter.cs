@@ -2,7 +2,6 @@ using System.Collections.Generic;
 
 public class HighLighter
 {
-    //сделать статикой?
     public void SwitchLights(List<ILightable> lightables, bool state)
     {
         if (lightables == null) return;

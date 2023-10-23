@@ -1,14 +1,17 @@
 using System;
 using UnityEngine;
 
-public class FinishLevelCheckerState : MonoBehaviour, IEnterableState, IExitableState
+public class FinishLevelCheckerState : IEnterableState
 {
-    [SerializeField] private MapBuilder _mapBuilder;
-    [SerializeField] private UiController _uiController;
+    public Action OnLevelFinish;
 
-    private Action _onLevelFinish;
-
+    private readonly MapBuilder _mapBuilder;
     private StateMachine _stateMachine;
+
+    public FinishLevelCheckerState(MapBuilder mapBuilder)
+    {
+        _mapBuilder = mapBuilder;
+    }
 
     public void Initialize(StateMachine stateMachine)
     {
@@ -17,13 +20,7 @@ public class FinishLevelCheckerState : MonoBehaviour, IEnterableState, IExitable
 
     public void OnEnter()
     {
-        _onLevelFinish += _uiController.ShowButton;
         StartCheck();
-    }
-
-    public void OnExit()
-    {
-        _onLevelFinish -= _uiController.ShowButton;
     }
 
     public void MoveToStartLevelState()
@@ -35,7 +32,8 @@ public class FinishLevelCheckerState : MonoBehaviour, IEnterableState, IExitable
     {
         if (CheckFinishGame())
         {
-            _onLevelFinish?.Invoke();
+            Debug.Log("finish");
+            OnLevelFinish?.Invoke();
         }
         else
         {

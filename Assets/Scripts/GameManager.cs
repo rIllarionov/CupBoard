@@ -1,20 +1,33 @@
-using UnityEngine;
+using VContainer.Unity;
 
-public class GameManager : MonoBehaviour
+public class GameManager : ITickable
 {
-    //можно переклить все связи с событиями и подписываться тут 
-    
     private StateMachine _stateMachine;
 
-    private void Start()
+    public GameManager(StartLevelState startLevelState,
+        CatchStartPointState catchStartPointState,
+        PathFinderState pathFinderState,
+        MovingState movingState,
+        FinishLevelCheckerState finishLevelCheckerState)
     {
         _stateMachine =
-            new StateMachine(GetComponent<StartLevelState>(),
-                GetComponent<CatchStartPointState>(),
-                GetComponent<PathFinderState>(),
-                GetComponent<MovingState>(),
-                GetComponent<FinishLevelCheckerState>());
+            new StateMachine(startLevelState,
+                catchStartPointState,
+                pathFinderState,
+                movingState,
+                finishLevelCheckerState);
+    }
 
+    public void Start()
+    {
         _stateMachine.Enter<StartLevelState>();
+    }
+
+    public void Tick()
+    {
+        if (_stateMachine.CurrentState is ITickableState tickableState)
+        {
+            tickableState.OnTick();
+        }
     }
 }

@@ -1,48 +1,32 @@
 using System;
-using System.Collections;
 using System.Collections.Generic;
-using UnityEngine;
+using Cysharp.Threading.Tasks;
 
-public class MovingState : MonoBehaviour, IEnterebleStateWithContext, IExitableState
+public class MovingState : IEnterebleStateWithContext
 {
-    [SerializeField] private Mover _mover;
-    [SerializeField] private MapBuilder _mapBuilder;
-
-    private Action<Transform, List<Point>, float> _onMove;
+    private readonly MoveAnimator _moveAnimator;
+    private readonly MapBuilder _mapBuilder;
 
     private Point _startPoint;
     private List<Point> _path;
 
     private StateMachine _stateMachine;
 
+    public MovingState(MapBuilder mapBuilder, MoveAnimator moveAnimator)
+    {
+        _mapBuilder = mapBuilder;
+        _moveAnimator = moveAnimator;
+    }
+
     public void Initialize(StateMachine stateMachine)
     {
         _stateMachine = stateMachine;
     }
 
-    public void OnExit()
-    {
-        _onMove -= _mover.Move;
-    }
-
     public void OnEnter(IContext context)
     {
-        _onMove += _mover.Move;
-        ReadContext(context);
-        StartCoroutine(Move());
-    }
-
-    private IEnumerator Move()
-    {
-        var moveDuration = 1f;
-
-        var chipTransform = _startPoint.Chip.transform;
-        _onMove?.Invoke(chipTransform, _path, moveDuration);
-        ReplaceChip();
-
-        yield return new WaitForSeconds(moveDuration);
-
-        _stateMachine.Enter<FinishLevelCheckerState>();
+        ReadContext(context); 
+        Move();
     }
 
     private void ReadContext(IContext context)
@@ -50,6 +34,15 @@ public class MovingState : MonoBehaviour, IEnterebleStateWithContext, IExitableS
         var pathFinderContext = (PathFinderStateContext)context;
         _startPoint = pathFinderContext.StartPoint;
         _path = pathFinderContext.Path;
+    }
+
+    private async UniTask Move()
+    {
+        var chipTransform = _startPoint.Chip.transform;
+        await _moveAnimator.StartAnimation(chipTransform, _path);
+
+        ReplaceChip();
+        _stateMachine.Enter<FinishLevelCheckerState>();
     }
 
     private void ReplaceChip()

@@ -1,13 +1,14 @@
 using System;
 using System.Collections.Generic;
+using Cysharp.Threading.Tasks;
 using UnityEngine;
 
-public class PathFinderState : MonoBehaviour, IEnterebleStateWithContext, IExitableStateWithContext
+public class PathFinderState : IEnterebleStateWithContext, IExitableStateWithContext, ITickableState
 {
-    [SerializeField] private MapBuilder _mapBuilder;
-    
-    private readonly PathFinder _pathFinder = new();
-    private readonly HighLighter _highLighter = new();
+    private readonly MapBuilder _mapBuilder;
+
+    private readonly PathFinder _pathFinder;
+    private readonly HighLighter _highLighter;
 
     private StateMachine _stateMachine;
 
@@ -18,6 +19,13 @@ public class PathFinderState : MonoBehaviour, IEnterebleStateWithContext, IExita
     private List<Point> _path;
 
     private bool _isActive;
+    
+    public PathFinderState(MapBuilder mapBuilder, PathFinder pathFinder, HighLighter highLighter)
+    {
+        _mapBuilder = mapBuilder;
+        _pathFinder = pathFinder;
+        _highLighter = highLighter;
+    }
 
 
     public void Initialize(StateMachine stateMachine)
@@ -41,7 +49,7 @@ public class PathFinderState : MonoBehaviour, IEnterebleStateWithContext, IExita
         return new PathFinderStateContext(_startPoint, _path);
     }
 
-    private void Update()
+    public void OnTick()
     {
         if (_isActive && Input.GetMouseButtonDown(0))
         {
@@ -51,7 +59,7 @@ public class PathFinderState : MonoBehaviour, IEnterebleStateWithContext, IExita
 
             if (finishPoint != null)
             {
-                _path = _pathFinder.GetPath(_startPoint, finishPoint);
+                _path = _pathFinder.GetPath(_startPoint, finishPoint); 
                 _stateMachine.Enter<MovingState>();
             }
             else

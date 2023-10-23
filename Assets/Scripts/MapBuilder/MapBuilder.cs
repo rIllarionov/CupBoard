@@ -3,8 +3,6 @@ using UnityEngine;
 
 public class MapBuilder : MonoBehaviour
 {
-    //может вынести все в скриптабл?
-
     [SerializeField] private LineDrawer _lineDrawer;
 
     [SerializeField] private Transform _mapPrefab;
@@ -16,7 +14,7 @@ public class MapBuilder : MonoBehaviour
     [SerializeField] private Vector3 _minimapSize;
 
     [SerializeField] private List<Sprite> _chipSprites;
-    
+
     private GameSettingsHolder _gameSettingsHolder;
     public List<Chip> MapChips { get; } = new();
     public List<Point> MapPoints { get; } = new();
@@ -88,7 +86,6 @@ public class MapBuilder : MonoBehaviour
             secondPoint.SetNeighbour(firstPoint);
 
             _lineDrawer.DrawLine(mapRoot, firstPoint.transform.position, secondPoint.transform.position);
-            //сделать на событиях?
         }
     }
 

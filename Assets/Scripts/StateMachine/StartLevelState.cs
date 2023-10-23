@@ -1,20 +1,21 @@
+using System;
 using System.Collections.Generic;
-using UnityEngine;
 
-public class StartLevelState : MonoBehaviour, IEnterableState, IExitableState
+public class StartLevelState : IEnterableState, IExitableState
 {
-    //передать ссылки иначе + переключить ui на события через медиатор
+    public Action OnLastLevel;
 
-    [SerializeField] private MapBuilder _mapBuilder;
-    [SerializeField] private UiController _uiController;
-
+    private readonly MapBuilder _mapBuilder;
     private GameSettingsHolder _gameSettingsHolder;
-
     private StateMachine _stateMachine;
 
     private List<string[]> _levelsSettings;
-
     private int _levelNumber;
+
+    public StartLevelState(MapBuilder mapBuilder)
+    {
+        _mapBuilder = mapBuilder;
+    }
 
     public void Initialize(StateMachine stateMachine)
     {
@@ -37,7 +38,7 @@ public class StartLevelState : MonoBehaviour, IEnterableState, IExitableState
         if (_levelNumber == _levelsSettings.Count)
         {
             _mapBuilder.DestroyMap();
-            _uiController.ShowTitle();
+            OnLastLevel?.Invoke();
             return;
         }
 

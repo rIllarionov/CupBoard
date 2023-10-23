@@ -7,7 +7,6 @@ public class LineDrawer : MonoBehaviour
 
     private List<LineRenderer> _lines = new();
 
-
     public void DrawLine(Transform parent, params Vector3[] points)
     {
         var lineRenderer = Instantiate(_lineRendererPrefab, parent, false);
