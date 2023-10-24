@@ -1,6 +1,5 @@
 using System;
 using System.Collections.Generic;
-using Cysharp.Threading.Tasks;
 using UnityEngine;
 
 public class PathFinderState : IEnterebleStateWithContext, IExitableStateWithContext, ITickableState
@@ -19,7 +18,7 @@ public class PathFinderState : IEnterebleStateWithContext, IExitableStateWithCon
     private List<Point> _path;
 
     private bool _isActive;
-    
+
     public PathFinderState(MapBuilder mapBuilder, PathFinder pathFinder, HighLighter highLighter)
     {
         _mapBuilder = mapBuilder;
@@ -59,7 +58,7 @@ public class PathFinderState : IEnterebleStateWithContext, IExitableStateWithCon
 
             if (finishPoint != null)
             {
-                _path = _pathFinder.GetPath(_startPoint, finishPoint); 
+                _path = _pathFinder.GetPath(_startPoint, finishPoint);
                 _stateMachine.Enter<MovingState>();
             }
             else

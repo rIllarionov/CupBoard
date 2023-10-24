@@ -1,5 +1,4 @@
 using System.Collections.Generic;
-using Cysharp.Threading.Tasks;
 using UnityEngine;
 
 public class CatchStartPointState : IEnterableState, IExitableStateWithContext, ITickableState
@@ -45,7 +44,7 @@ public class CatchStartPointState : IEnterableState, IExitableStateWithContext, 
             {
                 _startPoint = startPoint;
 
-                _highLighter.SwitchLights(new List<ILightable> { _startPoint.Chip }, true); 
+                _highLighter.SwitchLights(new List<ILightable> { _startPoint.Chip }, true);
                 _stateMachine.Enter<PathFinderState>();
             }
         }

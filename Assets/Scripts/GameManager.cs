@@ -1,14 +1,16 @@
 using VContainer.Unity;
 
-public class GameManager : ITickable
+public class GameManager : ITickable, IStartable
 {
     private StateMachine _stateMachine;
+    private readonly UiMediator _uiMediator;
 
     public GameManager(StartLevelState startLevelState,
         CatchStartPointState catchStartPointState,
         PathFinderState pathFinderState,
         MovingState movingState,
-        FinishLevelCheckerState finishLevelCheckerState)
+        FinishLevelCheckerState finishLevelCheckerState,
+        UiMediator uiMediator)
     {
         _stateMachine =
             new StateMachine(startLevelState,
@@ -16,10 +18,12 @@ public class GameManager : ITickable
                 pathFinderState,
                 movingState,
                 finishLevelCheckerState);
+        _uiMediator = uiMediator;
     }
 
     public void Start()
     {
+        _uiMediator.Initialize();
         _stateMachine.Enter<StartLevelState>();
     }
 

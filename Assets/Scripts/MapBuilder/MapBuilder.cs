@@ -1,4 +1,6 @@
 using System.Collections.Generic;
+using Cysharp.Threading.Tasks;
+using DG.Tweening;
 using UnityEngine;
 
 public class MapBuilder : MonoBehaviour
@@ -23,20 +25,20 @@ public class MapBuilder : MonoBehaviour
     private List<Point> _minimapPoints = new();
 
     private const int _indexOffset = 1;
+    private const int _millisecondsDelay = 100;
 
     private Transform _map;
     private Transform _miniMap;
 
 
-    public void Build(GameSettingsHolder gameSettingsHolder)
+    public async UniTask Build(GameSettingsHolder gameSettingsHolder)
     {
         _gameSettingsHolder = gameSettingsHolder;
 
         CreateMaps();
-        BuildMap(_map, MapPoints, _gameSettingsHolder.StartChipsPosition, MapChips);
-        BuildMap(_miniMap, _minimapPoints, _gameSettingsHolder.WinChipsPosition, MinimapChips);
-
+        await BuildMap(_miniMap, _minimapPoints, _gameSettingsHolder.WinChipsPosition, MinimapChips);
         ReplaceMinimap();
+        await BuildMap(_map, MapPoints, _gameSettingsHolder.StartChipsPosition, MapChips); 
     }
 
     public void DestroyMap()
@@ -56,24 +58,26 @@ public class MapBuilder : MonoBehaviour
         _miniMap = Instantiate(_mapPrefab);
     }
 
-    private void BuildMap(Transform mapRoot, List<Point> mapPoints, List<int> chipsPosition, List<Chip> chips)
+    private async UniTask BuildMap(Transform mapRoot, List<Point> mapPoints, List<int> chipsPosition, List<Chip> chips)
     {
-        SetPoints(mapRoot, mapPoints);
-        SetPaths(mapRoot, mapPoints);
-        SetChips(mapPoints, chipsPosition, chips);
+        await SetPoints(mapRoot, mapPoints);
+        await SetPaths(mapRoot, mapPoints);
+        await SetChips(mapPoints, chipsPosition, chips);
     }
 
-    private void SetPoints(Transform mapRoot, List<Point> mapPoints)
+    private async UniTask SetPoints(Transform mapRoot, List<Point> mapPoints)
     {
         foreach (var coordinate in _gameSettingsHolder.PointsCoordinates)
         {
             var mapPoint = Instantiate(_pointPrefab, mapRoot, false);
             mapPoint.transform.position = coordinate;
             mapPoints.Add(mapPoint);
+
+            await UniTask.Delay(_millisecondsDelay);
         }
     }
 
-    private void SetPaths(Transform mapRoot, List<Point> mapPoints)
+    private async UniTask SetPaths(Transform mapRoot, List<Point> mapPoints)
     {
         for (int i = 0; i < _gameSettingsHolder.Connections.Count; i++)
         {
@@ -86,10 +90,12 @@ public class MapBuilder : MonoBehaviour
             secondPoint.SetNeighbour(firstPoint);
 
             _lineDrawer.DrawLine(mapRoot, firstPoint.transform.position, secondPoint.transform.position);
+            
+            await UniTask.Delay(_millisecondsDelay);
         }
     }
 
-    private void SetChips(List<Point> mapPoints, List<int> chipsPositions, List<Chip> chips)
+    private async UniTask SetChips(List<Point> mapPoints, List<int> chipsPositions, List<Chip> chips)
     {
         for (int i = 0; i < _gameSettingsHolder.ChipsCount; i++)
         {
@@ -103,12 +109,16 @@ public class MapBuilder : MonoBehaviour
 
             //указываем корректные индексы точек
             currentChip.CurrentPosition = currentPoint - _indexOffset;
+            
+            await UniTask.Delay(_millisecondsDelay);
         }
     }
 
     private void ReplaceMinimap()
     {
-        _miniMap.position = _minimapOffset;
-        _miniMap.localScale = _minimapSize;
+        var duration = 1f;
+
+        _miniMap.DOMove(_minimapOffset, duration);
+        _miniMap.DOScale(_minimapSize, duration);
     }
 }

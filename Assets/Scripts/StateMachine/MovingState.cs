@@ -1,4 +1,3 @@
-using System;
 using System.Collections.Generic;
 using Cysharp.Threading.Tasks;
 
@@ -25,8 +24,8 @@ public class MovingState : IEnterebleStateWithContext
 
     public void OnEnter(IContext context)
     {
-        ReadContext(context); 
-        Move();
+        ReadContext(context);
+        Move().Forget();
     }
 
     private void ReadContext(IContext context)

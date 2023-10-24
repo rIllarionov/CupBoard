@@ -10,7 +10,7 @@ public static class FileRider
             string[] lines = File.ReadAllLines(path);
             return lines;
         }
-        
+
         catch (IOException e)
         {
             Debug.LogError("Ошибка чтения файла: " + e.Message);

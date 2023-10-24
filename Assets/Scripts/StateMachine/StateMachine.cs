@@ -1,6 +1,5 @@
 using System;
 using System.Collections.Generic;
-using Cysharp.Threading.Tasks;
 using UnityEngine;
 
 public class StateMachine
@@ -27,7 +26,7 @@ public class StateMachine
             case IExitableStateWithContext exitableStateWithContext:
                 context = exitableStateWithContext.OnExit();
                 break;
-            case IExitableState exitableState: 
+            case IExitableState exitableState:
                 exitableState.OnExit();
                 break;
         }

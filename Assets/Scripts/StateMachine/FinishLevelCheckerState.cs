@@ -1,5 +1,4 @@
 using System;
-using UnityEngine;
 
 public class FinishLevelCheckerState : IEnterableState
 {
@@ -32,7 +31,6 @@ public class FinishLevelCheckerState : IEnterableState
     {
         if (CheckFinishGame())
         {
-            Debug.Log("finish");
             OnLevelFinish?.Invoke();
         }
         else

@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using Cysharp.Threading.Tasks;
 
 public class StartLevelState : IEnterableState, IExitableState
 {
@@ -43,8 +44,12 @@ public class StartLevelState : IEnterableState, IExitableState
         }
 
         PrepareLevelSettings();
+        BuildAndEnterAsync().Forget();
+    }
 
-        _mapBuilder.Build(_gameSettingsHolder);
+    private async UniTask BuildAndEnterAsync()
+    {
+        await _mapBuilder.Build(_gameSettingsHolder);
         _stateMachine.Enter<CatchStartPointState>();
     }
 
